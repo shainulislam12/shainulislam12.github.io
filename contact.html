@@ -26,17 +26,27 @@
   <main class="contact">
     
     
-    <form action="https://formspree.io/f/myzwjzra" method="post" class="contact-form" style="max-width: 700px;" data-redirect="https://shainulislam12.github.io/shainulislam12.github.io/thank-you.html" >
+    <form action="https://formspree.io/f/myzwjzra" method="post" class="contact-form" style="max-width: 700px;" id="myForm" >
       <input type="text" name="_gotcha" style="display:none">
       <h2>Get In Touch</h2>
       <input type="text" placeholder="Your Name" class="ne" required>
       <input type="email" placeholder="Email" name="email" class="ne" required>
       <textarea placeholder="Your Message" name="message" class="mes"></textarea>
       <button type="submit" class="btn btn-primary">Send Message</button>
-      <input type="hidden" name="_next" value="https://your portfolio.com/thank-you.html">
-
     </form>
   </main>
+  <script>
+    document.getElementById("myForm").addEventListener("submit", function(e) {
+      e.preventDefault(); // Prevent default Formspree redirect
+      fetch(this.action, {  // Submit to Formspree
+        method: "POST",
+        body: new FormData(this),
+        headers: { "Accept": "application/json" }
+      })
+        .then(() => window.location.href = "thank-you.html") // Redirect AFTER submission
+        .catch(() => alert("Error! Please try again."));
+    });
+  </script>
 
   <script src="assets/js/main.js"></script>
 </body>
