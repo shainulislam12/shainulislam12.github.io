@@ -188,16 +188,16 @@ h2{
   border-radius: 50px;
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s ease;
 }
 
 .btn-primary {
   background: var(--accent-color);
-  transition: transform 0.3s;
+  transition: all 0.3s ease;
   color: white;
 }
 .outline{
   color: var(--accent-color);
+  transition: all 0.1s ease;
 }
 
 .btn-primary:hover {
