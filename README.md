@@ -55,3 +55,23 @@ While this is my personal portfolio, I welcome suggestions and feedback. Please 
 ## 📬 Contact
 - LinkedIn: [Md. Shainul Islam](https://www.linkedin.com/in/mdshainulislam)
 - Email: shainulrakib1112@gmail.com
+
+## 🔏 Credits & Usage  
+
+### ✅ Allowed  
+- *Inspiration*: You may use this project as a reference for learning.  
+- *Code snippets*: Reuse small portions with proper attribution.  
+
+### ❌ Not Allowed  
+- *Copying the entire design/code* and claiming it as your own.  
+- *Redistributing* without significant modifications.  
+
+### 📜 License  
+This project is licensed under *[MIT License](LICENSE)* - see the [LICENSE](LICENSE) file for details.  
+
+Attribution requirement:  
+```html
+<!-- If reusing significant code, include this in your project -->
+<div class="credits">
+  Design inspired by <a href="https://shainulislam12.github.io" target="_blank">Md. Shainul Islam</a>
+</div>
