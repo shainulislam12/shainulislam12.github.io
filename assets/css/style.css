@@ -42,7 +42,6 @@ body {
 .container {
   background-color: var(--bg-color);
   transition: background 0.3s, color 0.3s;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
 }
