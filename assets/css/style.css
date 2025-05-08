@@ -1,10 +1,28 @@
 
 /* ===== Variables & Reset ===== */
+/* Light Theme (Default) */
 :root {
-  --primary: #2563eb;
-  --dark: #1e293b;
-  --light: #f8fafc;
-  --accent: #f59e0b;
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --accent-color: #2563eb;
+}
+
+/* Dark Theme */
+.dark-mode {
+  --bg-color: #1a1a1a;
+  --text-color: #f0f0f0;
+  --accent-color: linear-gradient(90deg,rgb(0, 38, 255),rgb(128, 0, 85));
+
+}
+.theme-toggle {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 100;
 }
 
 * {
@@ -16,11 +34,14 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   line-height: 1.6;
-  color: var(--dark);
-  background: var(--light);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
 }
 
 .container {
+  background-color: var(--bg-color);
+  transition: background 0.3s, color 0.3s;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
@@ -40,6 +61,7 @@ header {
 .skills, 
 .contact,
 .person {
+  position:relative;
   padding: 30px;
   width: 90%;
   margin: auto;
@@ -119,8 +141,7 @@ h2{
 .project-grid{
   display: flex;
   flex-wrap: wrap;
-  column-gap: 40px;
-  row-gap: 30px;
+  row-gap: 20px;
 }
 
 .nav-links {
@@ -136,7 +157,8 @@ h2{
 }
 
 .nav-links a:hover {
-  color: var(--primary);
+  color: var(--accent-color);
+  transition: all 0.3s ease;
 }
 .txt{
   display: flex;
@@ -171,8 +193,12 @@ h2{
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: var(--accent-color);
+  transition: transform 0.3s;
   color: white;
+}
+.outline{
+  color: var(--accent-color);
 }
 
 .btn-primary:hover {
@@ -187,6 +213,7 @@ footer {
   padding: 3rem 0;
   text-align: center;
 }
+
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
