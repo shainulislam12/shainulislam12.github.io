@@ -8,6 +8,7 @@ A responsive portfolio website showcasing my projects, skills and contact inform
 ## ✨ Features
 - Mobile-friendly responsive design
 - Interactive animations
+- Dark mode toggle
 - Contact form with Formspree integration
 - Projects showcase with filters
 
