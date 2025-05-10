@@ -91,6 +91,7 @@ nav {
 .skill-category{
   height: 40%;
 }
+
 ul{
   margin-left:20px ;
 }
@@ -104,10 +105,12 @@ ul{
 .act{
   display: flex;
   flex-direction: column;
+  row-gap: 10px;
   justify-content: flex-start;
   width: 50%;
   
 }
+
 
 .logo {
   font-weight: 700;
@@ -197,6 +200,8 @@ h2{
 }
 .outline{
   color: var(--accent-color);
+  min-width: 155px;
+  border: 2px solid;
   transition: all 0.1s ease;
 }
 
@@ -235,5 +240,9 @@ footer {
     align-items: baseline;
     width: 100%;
     
+  }
+  .outline{
+    min-width: fit-content;
+    min-width: 130px;
   }
 }
