@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.7.0/math.min.js"></script>
+    <style>
+        .calculator {
+            width: 220px;
+            margin: 50px auto;
+            background:url("images/fut_city.jpg");
+            background-size: cover;
+            background-position:0px 0px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 15px 15px rgba(20, 20, 20, 0.5);
+        }
+        #display{
+            height: 50px;
+            width: calc(100% - 24px);
+            border-width: 2px;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 20px;
+            text-align: right;
+        }
+        .buttons{
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        button{
+            padding: 12px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #f0f0f0;
+            transition: background 0.2s;
+        }
+        button:hover{
+            background: #beb9b9;
+        }
+        .equals{
+            grid-column:span 3 ;
+            background: #28a745;
+            color: white;
+        }
+        .operator{
+            background: #007bff;
+            color: white;
+        }
+        .special{
+            background: #007bff;
+            color: white;
+        }
+        .wc{
+            background-image: url("images/si_logo.jpg");
+            background-size: cover;
+            background-position: 0px -2px;
+        }
+    </style>
+</head>
+<body>
+   <div class="calculator">
+    <input type="text" id="display" readonly>
+    <div class="buttons">
+        <button onclick="appendToDisplay('7')">7</button>
+        <button onclick="appendToDisplay('8')">8</button>
+        <button onclick="appendToDisplay('9')">9</button>
+        <button onclick="appendToDisplay('/')" class="operator">/</button>
+
+        <button onclick="appendToDisplay('4')">4</button>
+        <button onclick="appendToDisplay('5')">5</button>
+        <button onclick="appendToDisplay('6')">6</button>
+        <button onclick="appendToDisplay('*')" class="operator">*</button>
+
+        <button onclick="appendToDisplay('1')">1</button>
+        <button onclick="appendToDisplay('2')">2</button>
+        <button onclick="appendToDisplay('3')">3</button>
+        <button onclick="appendToDisplay('-')" class="operator">-</button>
+
+        <button onclick="appendToDisplay('0')">0</button>
+        <button onclick="appendToDisplay('.')">.</button>
+        <button onclick="clearDisplay()" class="special">C</button>
+        <button onclick="appendToDisplay('+')" class="operator">+</button>
+
+        <button onclick="calculate()" class="equals">=</button>
+
+        <button onclick="appendToDisplay('sqrt(')" class="special">sq</button>
+        <button onclick="appendToDisplay('pow(')" class="special">^</button>
+        <button onclick="appendToDisplay(')')" class="special">)</button>
+        <button onclick="backspace()" class="special">←</button>
+        <button onclick="appendToDisplay('Welcome')" class="wc"></button>
+        
+    </div>
+   </div> 
+   <script>
+    const display = document.getElementById('display');
+    function appendToDisplay(value) {
+        if (value ==='.'&& display.value.includes('.')){
+            const lastNum=display.value.split(/[\+\-\*\/]/).pop();
+            if (lastNum.includes('.')) return;
+        }
+        display.value += value
+    }
+
+    function calculate() {
+        try{
+            const sanitizedInput = display.value.replace(/[^0-9+\-*\/\^().sqrt]/g,'');
+            const result= math.evaluate(sanitizedInput);
+            display.value = parseFloat(result.toFixed(8));
+        } catch (error){
+            display.value = 'Error';
+        }
+    }
+
+    function clearDisplay() {
+        display.value='';
+    }
+    
+    function backspace() {
+        display.value=display.value.slice(0,-1);
+    }
+            
+   </script>
+</body>
+</html>
