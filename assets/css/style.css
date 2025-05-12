@@ -59,13 +59,13 @@ header {
 .projects, 
 .skills, 
 .contact,
-.person {
+.person{
   position:relative;
   padding: 30px;
   width: 90%;
   margin: auto;
-  padding-top: 100px; /* Same as navbar height */
-  min-height: calc(100vh - 100px); /* Full viewport minus navbar */
+  padding-top: 100px;
+  min-height: calc(100vh - 100px);
 }
 .person{
   display: flex;
