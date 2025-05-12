@@ -142,6 +142,7 @@ h2{
 }
 .project-grid{
   display: flex;
+  column-gap: 40px;
   flex-wrap: wrap;
   row-gap: 20px;
 }
@@ -204,10 +205,23 @@ h2{
   border: 2px solid;
   transition: all 0.1s ease;
 }
-
 .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+}
+.dark-mode .btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+  color: #1a1a1a;
+  animation: shift 3s linear infinite;
+} 
+.outline:hover{
+  transform: translateY(-3px);
+}  
+@keyframes shift {
+  0% { background: rgb(0, 38, 255); } 
+  50% { background:rgb(128, 0, 85); }  
+  100% { background: rgb(0, 38, 255);}
 }
 
 /* ===== Footer ===== */
