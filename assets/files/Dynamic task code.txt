@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynamic Task Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f5f7fa, #c3cfe2);
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #4a4a4a;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .list-container {
+      margin-top: 20px;
+    }
+    .list {
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .task {
+      padding-bottom: 15px;
+      margin-bottom: 10px;
+    }
+    .progress-bar {
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress {
+      background: linear-gradient(to right, #76c7c0, #4caf50);
+      height: 20px;
+      transition: width 0.5s;
+    }
+    .task-controls button {
+      height: 35px;
+      width: 80px;
+      margin-top: 10px;
+      margin-right: 5px;
+    }
+    .task-controls .increment {
+      background-color: #2196F3;
+    }
+    .task-controls .decrement {
+      background-color: #cc5b5b;
+    }
+    .task-controls .remove {
+      background-color: #9e9e9e;
+    }
+    .task-controls .start {
+      background-color: #2196F3;
+    }
+    .task-controls .reset {
+      background-color: #cc5b5b;
+    }
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+    .summary {
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .summary h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    #totalProgressText {
+      margin-top: 5px;
+      text-align: right;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>📝 Daily Task Calculator</h1>
+
+  <div style="text-align: center;">
+    <input type="text" id="taskName" placeholder="Task name" />
+    <input type="number" id="taskTime" placeholder="Time (min) or Clicks" min="1" />
+    <select id="taskType">
+      <option value="timer">Timer</option>
+      <option value="click">Click</option>
+    </select>
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <div id="taskListContainer" class="list-container">
+    <div class="list">
+      <h2>Active Tasks</h2>
+      <div id="taskList">
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <h3>📊 Total Progress</h3>
+    <div class="progress-bar">
+      <div class="progress" id="totalProgress"></div>
+    </div>
+    <p id="totalProgressText">0%</p>
+  </div>
+
+  <div class="summary">
+    <h3>📅 Weekly Summary</h3>
+    <ul id="weeklySummary"></ul>
+  </div>
+  
+  <div id="completedTaskListContainer" class="list-container">
+    <div class="list">
+      <div id="completedTaskList"></div>
+      <button onclick="removeAllCompletedTasks()" style="margin-bottom: 10px;">Remove All</button>
+    </div>
+  </div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+let intervals = {};
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function addTask() {
+  const name = document.getElementById("taskName").value.trim();
+  const value = parseInt(document.getElementById("taskTime").value);
+  const type = document.getElementById("taskType").value;
+  if (!name || !value || value <= 0) {
+    alert("Please enter valid task name and value.");
+    return;
+  }
+  const task = {
+    name,
+    type,
+    originalTime: value*60,
+    elapsed: 0,
+    running: false
+  };
+  tasks.push(task);
+  saveTasks();
+  renderTasks();
+  document.getElementById("taskName").value = "";
+  document.getElementById("taskTime").value = "";
+}
+
+function formatTime(seconds) {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+function updateTotalProgress() {
+  const totalElapsed = tasks.reduce((sum, t) => sum + t.elapsed, 0);
+  const totalOriginal = tasks.reduce((sum, t) => sum + t.originalTime, 0);
+  const percent = totalOriginal ? Math.min(100, Math.round((totalElapsed / totalOriginal) * 100)) : 0;
+  document.getElementById("totalProgress").style.width = percent + "%";
+  document.getElementById("totalProgressText").innerText = percent + "%";
+}
+
+function renderTasks() {
+  const container = document.getElementById("taskList");
+  container.innerHTML = "";
+  const completedContainer = document.getElementById("completedTaskList");
+  completedContainer.innerHTML = "";
+  tasks.forEach((task, index) => {
+    if (task.elapsed >= task.originalTime) return;
+    const percent = Math.min(100, Math.round((task.elapsed / task.originalTime) * 100));
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `
+      <div class="task-header">
+        <strong>${task.name}</strong>
+        <span>${
+           task.type === 'click'
+              ? `${(task.elapsed)/60}/${(task.originalTime)/60}`
+              : `${formatTime(task.elapsed)} / ${formatTime(task.originalTime)}`
+        }</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress" style="width: ${percent}%"></div>
+      </div>
+      <div class="task-controls">
+        ${task.type === 'click' ? `
+          <button class="increment" onclick="increment(${index})">Inc.</button>
+          <button class="decrement" onclick="decrement(${index})">Dec.</button>
+        ` : `
+          <button class="start" onclick="toggleStart(${index})">${task.running ? 'Stop' : 'Start'}</button>
+          <button class="reset" onclick="resetTimer(${index})">Reset</button>
+        `}
+        <button class="remove" onclick="removeTask(${index})">Remove</button>
+      </div>
+    `;
+    container.appendChild(div);
+    if (task.elapsed >= task.originalTime) {  
+      const comp = div.cloneNode(true);  
+      completedContainer.appendChild(comp);
+    }
+  });
+  tasks.forEach((task, index) => {
+    if (task.elapsed < task.originalTime) return;
+    const percent = 100;
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `
+    <div class="task-header">
+      <strong>${task.name}</strong>
+      <span>✔ Completed</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress" style="width: ${percent}%"></div>
+    </div>
+    <div class="task-controls">
+      <button class="remove" onclick="removeTask(${index})">Remove</button>
+    </div>`;
+    completedContainer.appendChild(div);
+  });
+  updateTotalProgress();
+}
+
+function toggleStart(index) {
+  const task = tasks[index];
+  task.running = !task.running;
+  if (task.running) {
+    intervals[index] = setInterval(() => {
+      task.elapsed++;
+      if (task.elapsed >= task.originalTime) {
+        task.running = false;
+        clearInterval(intervals[index]);
+      }
+      saveTasks();
+      renderTasks();
+    }, 1000);
+  } else {
+    clearInterval(intervals[index]);
+  }
+  saveTasks();
+  renderTasks();
+}
+
+function resetTimer(index) {
+  const task = tasks[index];
+  task.elapsed = 0;
+  task.running = false;
+  clearInterval(intervals[index]);
+  saveTasks();
+  renderTasks();
+}
+
+function increment(index) {
+  const task = tasks[index];
+  if (task.elapsed < task.originalTime) {
+    task.elapsed=task.elapsed+60;
+    saveTasks();
+    renderTasks();
+  }
+}
+
+function decrement(index) {
+  const task = tasks[index];
+  if (task.elapsed > 0) {
+    task.elapsed=task.elapsed-60;
+    saveTasks();
+    renderTasks();
+  }
+}
+
+function removeTask(index) {
+  clearInterval(intervals[index]);
+  tasks.splice(index, 1);
+  saveTasks();
+  renderTasks();
+}
+
+function updateWeeklySummary() {
+  const summary = document.getElementById("weeklySummary");
+  const today = new Date().getDay();
+  let week = JSON.parse(localStorage.getItem("weekSummary") || "{}");
+  const completedTasksCount = tasks.filter(t => t.elapsed >= t.originalTime).length;
+  week[today] = completedTasksCount;
+  localStorage.setItem("weekSummary", JSON.stringify(week));
+
+  summary.innerHTML = "";
+  for (let i = 0; i < 7; i++) {
+    const li = document.createElement("li");
+    li.innerText = `Day ${i + 1}: ${week[i] || 0} task(s) completed`;
+    summary.appendChild(li);
+  }
+}
+
+function removeAllCompletedTasks() {
+  tasks = tasks.filter(t => t.elapsed < t.originalTime);
+  saveTasks();
+  renderTasks();
+}
+
+setInterval(() => {
+  updateTotalProgress();
+  updateWeeklySummary();
+}, 1000);
+
+renderTasks();
+updateWeeklySummary();
+</script>
+</body>
+</html>
